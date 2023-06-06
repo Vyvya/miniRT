@@ -6,7 +6,7 @@
 /*   By: vgejno <vgejno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 18:38:58 by pmarquis          #+#    #+#             */
-/*   Updated: 2023/06/04 22:28:51 by vgejno           ###   ########.fr       */
+/*   Updated: 2023/06/05 23:12:35 by vgejno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <ft_arr.h>
 # include <ft_getnext.h>
 # include <ft_printf.h>
+# include "math.h"
+# include "fcntl.h"
 # include "minilibx_opengl/mlx.h"
 
 # define WIN_W 1400
@@ -28,9 +30,9 @@
  */
 typedef struct s_color
 {
-	int	r;
-	int	g;
-	int	b;
+	unsigned char	r;
+	unsigned char	g;
+	unsigned char	b;
 }	t_color;
 
 /*
@@ -194,6 +196,12 @@ int		load_cy(char *info, int lineno);
 char	*scan_color(char *s, t_color *clr);
 char	*scan_coord(char *s, t_coord *coord);
 int		verror(const char *format, ...);
+
+float		vec_dot_product(t_vector *vec1, t_vector *vec2);
+void		vec_normailzed(t_vector *vec);
+double		vec_length(t_vector *vec);
+t_vector	*vec_substract(t_vector *vec1, t_vector *vec2);
+t_vector	*new_vector(double x, double y, double z);
 
 # ifndef NDEBUG
 

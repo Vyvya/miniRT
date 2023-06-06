@@ -6,7 +6,7 @@
 /*   By: vgejno <vgejno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 18:02:22 by pmarquis          #+#    #+#             */
-/*   Updated: 2023/06/04 23:05:44 by vgejno           ###   ########.fr       */
+/*   Updated: 2023/06/06 12:08:39 by vgejno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,17 +123,20 @@ static int	_check_args(int argc, char *argv[])
 	return (1);
 }
 
-static t_color _color_gradient(t_color *color, int y)
+static t_color _color_gradient(double y, t_color uno, t_color dos)
 {
-	double	percent;
+	const double	percent = y / WIN_H;
+	const t_color	diff = (t_color){
+		(uno.r - dos.r) * percent,
+		(uno.g - dos.g) * percent,
+		(uno.b - dos.b) * percent
+		};
 
-	percent = WIN_H / y;
-	// printf("percent: [%f]\n", percent);
-	// color->r = (1 - percent) * (((0x000000FF >> 16) & 0xFF) + (0x000000FF & 0xFF));
-	color->r = (WIN_H / y) * (((0xff4128 >> 16) & 0xFF) + ((0x7279b3 >> 16)  & 0xFF)); // / (WIN_W - 1)
-	color->g = (WIN_H / y) * (((0xff4128 >> 8) & 0xFF) + ((0x7279b3 >> 8) & 0xFF));
-	color->b = (WIN_H / y) * (((0xff41288) & 0xFF) + ((0x7279b3) & 0xFF));
-	return (*color);
+	return ((t_color){
+		uno.b - diff.b,
+		uno.g - diff.g,
+		uno.r - diff.r,
+	});
 }
 
 static void	_my_mlx_pixel_put(t_image *img, int	x, int y)
@@ -141,10 +144,11 @@ static void	_my_mlx_pixel_put(t_image *img, int	x, int y)
 	char	*dst;
 	int		offset;
 
-	offset = y * img->line_length + x * (img->bits_per_pixel / 8);
+	offset = y * img->line_length + x * 4;
 	dst = img->addr + offset;
 	// *(unsigned int*)dst = color;
-	*(t_color*)dst = _color_gradient(&img->color, y);
+	*(t_color*)dst = _color_gradient(y, (t_color){44, 255, 253},
+	(t_color){255, 190, 149});
 }
 
 int	main(int argc, char *argv[])
@@ -156,7 +160,7 @@ int	main(int argc, char *argv[])
 	int		y;
 	
 	x = 0;
-	y = 1;
+	y = 0;
 	if (!_check_args(argc, argv)
 		|| !_load_config(argv[1]))
 		return (1);
@@ -165,9 +169,9 @@ int	main(int argc, char *argv[])
 	mlx_win = mlx_new_window(mlx, WIN_W, WIN_H, "miniRT");
 	img.img = mlx_new_image(mlx, WIN_W, WIN_H);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	while (y < (WIN_H - 1))
+	while (y <= (WIN_H -1))
 	{
-		while (x < (WIN_W - 1))
+		while (x <= (WIN_W- 1))
 		{
 			_my_mlx_pixel_put(&img, x, y);
 			x++;
